@@ -1,4 +1,4 @@
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Navbar from '../../components/Navbar';
 import Link from 'next/link';
@@ -30,6 +30,12 @@ async function getUserPlaylists(token: string) {
 }
 
 export default async function Profile() {
+  const headersList = await headers();
+  const host = headersList.get('host') || '';
+  if (host.startsWith('localhost')) {
+    redirect('http://127.0.0.1:3000/profile');
+  }
+
   const cookieStore = await cookies();
   const spotifyToken = cookieStore.get('spotify_access_token')?.value;
 

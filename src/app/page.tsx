@@ -1,4 +1,4 @@
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { logout } from './actions';
@@ -38,6 +38,12 @@ async function getYouTubeProfile(token: string) {
 }
 
 export default async function Home({ searchParams }: { searchParams?: Promise<{ manage?: string }> }) {
+  const headersList = await headers();
+  const host = headersList.get('host') || '';
+  if (host.startsWith('localhost')) {
+    redirect('http://127.0.0.1:3000');
+  }
+
   const cookieStore = await cookies();
   const spotifyToken = cookieStore.get('spotify_access_token')?.value;
   const googleToken = cookieStore.get('google_access_token')?.value;

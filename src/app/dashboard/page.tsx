@@ -1,4 +1,4 @@
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import ConverterClient from './ConverterClient';
 import Navbar from '../../components/Navbar';
@@ -6,6 +6,12 @@ import Navbar from '../../components/Navbar';
 export const dynamic = 'force-dynamic';
 
 export default async function Dashboard({ searchParams }: { searchParams: Promise<{ url?: string }> }) {
+  const headersList = await headers();
+  const host = headersList.get('host') || '';
+  if (host.startsWith('localhost')) {
+    redirect('http://127.0.0.1:3000/dashboard');
+  }
+
   const cookieStore = await cookies();
   const spotifyToken = cookieStore.get('spotify_access_token')?.value;
   const googleToken = cookieStore.get('google_access_token')?.value;

@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     if (tokens.access_token) {
       const isSpotifyConnected = request.cookies.has('spotify_access_token');
       const targetPath = isSpotifyConnected ? '/dashboard' : '/?google=success';
-      const response = NextResponse.redirect(new URL(targetPath, request.url));
+      const response = NextResponse.redirect(new URL(targetPath, 'http://127.0.0.1:3000'));
       
       response.cookies.set('google_access_token', tokens.access_token, {
         path: '/',
