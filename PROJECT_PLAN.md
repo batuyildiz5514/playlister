@@ -1,58 +1,58 @@
-# Playlister - Proje Planı
+# Playlister - Project Plan & Roadmap
 
-## Proje Özeti
-Bu proje, kullanıcıların Spotify'daki müzik listelerini (playlist) YouTube Music ve standart YouTube platformlarına aktarmalarını sağlayan aracı bir uygulamadır. 
-İlk etapta web uygulaması olarak geliştirilecek olan Playlister, ilerleyen aşamalarda mobil uygulama (iOS/Android) ve masaüstü (.exe) formatlarına da dönüştürülecektir.
+## 📌 Project Overview
+Playlister is a web application that enables users to effortlessly migrate their Spotify music playlists and albums to YouTube (and YouTube Music).
+Initially architected as a Next.js web application, it is designed with future portability in mind for potential desktop (.exe via Tauri) or mobile (via Capacitor) distribution.
 
-## 🛠️ Teknoloji Yığını (Tech Stack) Önerisi
-Hem web, hem mobil, hem de masaüstünde çalışacak bir yapı kurmak için "Bir Kere Yaz, Her Yerde Çalıştır" (Write Once, Run Anywhere) mantığını benimsemeliyiz.
+## 🛠️ Tech Stack
+Built following a "Write Once, Run Anywhere" modular paradigm:
 
-*   **Frontend (Arayüz & Web):** [Next.js](https://nextjs.org/) (React tabanlı). 
-    *   *Neden?* API rotaları sayesinde sunucu (backend) ihtiyacını tek bir projede çözebiliriz.
-*   **Stillendirme (CSS):** Tailwind CSS (Hızlı ve modern arayüz tasarımı için).
-*   **Masaüstü Uygulaması (İleri Aşama):** [Tauri](https://tauri.app/). 
-    *   *Neden?* Yazdığımız web uygulamasını kolayca Windows (.exe) uygulamasına çevirir. Tauri çok daha hafif ve hızlıdır.
-*   **Mobil Uygulama (İleri Aşama):** [Capacitor](https://capacitorjs.com/) (Web'i mobile çevirir).
-*   **Veritabanı (Gerekirse):** İlk etapta veritabanına gerek yok, kullanıcı verileri (tokenlar) tarayıcıda tutulabilir.
+*   **Frontend (UI & Web):** [Next.js](https://nextjs.org/) (React 19, App Router)
+    *   *Why?* Unified server-side routing, API routes, and Server Actions eliminate the need for a separate backend service.
+*   **Styling:** Tailwind CSS (Modern, fast, dark mode aesthetics).
+*   **Desktop App (Future Phase):** [Tauri](https://tauri.app/) (Lightweight Windows/macOS native compilation).
+*   **Mobile App (Future Phase):** [Capacitor](https://capacitorjs.com/) (Web-to-mobile bridge).
+*   **Authentication & Session:** Stateless HTTP-only cookie-based dual OAuth 2.0 flow.
 
-## 🔗 API'ler ve Ücretlendirme
-*   **Spotify Web API:** Kullanımı **ücretsizdir**. Kullanıcıların giriş yapması, çalma listelerini ve içindeki şarkıları okuması için kullanılacaktır.
-*   **YouTube Data API v3:** Kullanımı **ücretsizdir** ancak günlük bir "Kota" (Quota) sınırı vardır (Günlük 10.000 kredi). 
-    *   Şarkı aramak, çalma listesi oluşturmak ve şarkı eklemek kota harcar. Uygulama büyüdükçe Google'dan kota artırımı talep etmek ücretsizdir. Biz şimdilik kotaya takılmadan ilerleyeceğiz.
+## 🔗 APIs & Quotas
+*   **Spotify Web API:** Free tier. Used for user profile retrieval, playlist querying, and album track extraction.
+*   **YouTube Data API v3:** Free tier with standard quota allowances (10,000 units/day). Used for playlist creation and video search/insertion.
 
 ---
 
-## 🚀 Geliştirme Aşamaları (Yol Haritası)
+## 🚀 Development Roadmap
 
-### Aşama 1: Kurulum ve Temel Yapı
-1.  [x] Proje klasöründe Next.js uygulamasının oluşturulması (VScode'a uygun).
-2.  [x] Git (versiyon kontrolü) başlatılması ve ilk "commit"in yapılması.
-3.  [x] Gerekli kütüphanelerin kurulması.
-4.  [x] Spotify ve Google Cloud (YouTube) Developer konsollarından API anahtarlarının alınması.
+### Phase 1: Setup & Core Infrastructure
+1.  [x] Initialize Next.js project repository configured for VS Code and TypeScript.
+2.  [x] Git version control setup and initial commits.
+3.  [x] Dependency installations (googleapis, tailwindcss, etc.).
+4.  [x] Spotify Developer Dashboard & Google Cloud Console API credentials configuration.
 
-### Aşama 2: API Entegrasyonları ve Kimlik Doğrulama
-1.  [x] Spotify OAuth 2.0 entegrasyonu (Kullanıcının "Spotify ile Giriş Yap" butonuna basması).
-2.  [x] YouTube (Google) OAuth 2.0 entegrasyonu ("YouTube ile Giriş Yap").
-3.  [x] Kullanıcının Spotify çalma listelerini çeken fonksiyonun yazılması.
+### Phase 2: API Integrations & Authentication
+1.  [x] Spotify OAuth 2.0 flow ("Connect with Spotify").
+2.  [x] YouTube (Google) OAuth 2.0 flow ("Connect with YouTube").
+3.  [x] Fetching user playlists and handling dual token cookie storage.
 
-### Aşama 3: Çekirdek Mantık (Dönüştürme İşlemi)
-1.  [x] Kullanıcının seçtiği Spotify çalma listesindeki şarkıların listelenmesi (ve albüm desteği).
-2.  [x] Her bir şarkı adı ve sanatçısının YouTube'da aratılması (Paralel 5x işlem motoru).
-3.  [x] YouTube hesabında yeni bir çalma listesi oluşturulması.
-4.  [x] Bulunan YouTube videolarının bu yeni çalma listesine eklenmesi.
+### Phase 3: Core Conversion Logic
+1.  [x] Playlist & album track extraction with automatic type recognition.
+2.  [x] YouTube video search with concurrency optimization (5x parallel chunks).
+3.  [x] Automated playlist creation in user's YouTube account.
+4.  [x] Inserting matched YouTube videos into the created playlist.
+5.  [x] Automatic pagination handling for large playlists (100+ & 300+ tracks).
 
-### Aşama 4: Arayüz (UI/UX) ve Hata Yönetimi
-1.  [x] Modern, karanlık tema (Dark mode) destekli, şık bir arayüz tasarımı.
-2.  [x] Dönüşüm sırasında kullanıcıya ilerleme çubuğu (Progress bar) gösterilmesi.
-3.  [x] Profil sayfası, çalma listesi modal önizlemesi ve oturum yönetimi (Bağlantıyı Kes).
+### Phase 4: UI/UX, Performance & Polish
+1.  [x] Modern dark mode user interface with green-to-red gradient branding.
+2.  [x] Live progress bar with status updates during batch transfer.
+3.  [x] User profile dashboard showing created playlists with interactive track preview modal.
+4.  [x] Connection management (Disconnect / Re-authenticate for both providers).
+5.  [x] Channel & profile identity display with avatars on the landing screen.
 
-### Aşama 5: Masaüstü ve Mobil Sürümler
-1.  [ ] Tauri entegrasyonu ile uygulamanın `.exe` formatında derlenmesi.
-2.  [ ] Capacitor kurularak mobil testlerin yapılması.
+### Phase 5: Desktop and Mobile Distribution (Future Roadmap)
+1.  [ ] Package as desktop app (.exe / .dmg) via Tauri.
+2.  [ ] Mobile deployment & testing via Capacitor.
 
 ---
 
-## 💻 VSCode ve GitHub Süreci
-*   Proje kodlarını tamamen VSCode yapısına uygun oluşturacağım.
-*   Önemli aşamaları tamamladıkça Terminal üzerinden `git add .`, `git commit -m "mesaj"` komutlarıyla değişiklikleri kaydedeceğiz.
-*   Siz GitHub'da boş bir repo açtığınızda kodu doğrudan oraya göndereceğiz (Push).
+## 💻 Contribution & Git Workflow
+*   Follow clean commit conventions (`feat:`, `fix:`, `docs:`, `refactor:`).
+*   Protect secrets in `.env.local` using `.gitignore` at all times.

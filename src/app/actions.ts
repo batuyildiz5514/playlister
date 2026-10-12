@@ -8,7 +8,7 @@ export async function fetchSpotifyPlaylist(playlistUrl: string) {
   const token = cookieStore.get('spotify_access_token')?.value;
 
   if (!token) {
-    throw new Error('Spotify token bulunamadı. Lütfen tekrar giriş yapın.');
+    throw new Error('Spotify token not found. Please log in again.');
   }
 
   let isAlbum = false;
@@ -30,22 +30,22 @@ export async function fetchSpotifyPlaylist(playlistUrl: string) {
   }
 
   if (!spotifyId || spotifyId.includes('spotify.com')) {
-    throw new Error('Geçersiz Spotify linki. Lütfen bir çalma listesi veya albüm linki girin.');
+    throw new Error('Invalid Spotify link. Please enter a valid playlist or album link.');
   }
 
   if (isAlbum) {
-    // ALBÜM İŞLEMLERİ
+    // ALBUM OPERATIONS
     const res = await fetch(`https://api.spotify.com/v1/albums/${spotifyId}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
     if (!res.ok) {
-      throw new Error('Albüm bulunamadı. Link hatalı olabilir.');
+      throw new Error('Album not found. The link might be invalid.');
     }
 
     const albumData = await res.json();
 
-    // Albüm şarkıları için sayfalama (pagination)
+    // Pagination for album tracks
     let allAlbumItems: any[] = [];
     let albumTracksUrl = `https://api.spotify.com/v1/albums/${spotifyId}/tracks?limit=50`;
     
@@ -57,10 +57,9 @@ export async function fetchSpotifyPlaylist(playlistUrl: string) {
       if (pageData.error) break;
       
       allAlbumItems.push(...(pageData.items || []));
-      albumTracksUrl = pageData.next; // null ise döngü biter
+      albumTracksUrl = pageData.next;
     }
 
-    // Albümlerde track yapısı direkt gelir (item.track şeklinde sarmalanmaz)
     const trackList = allAlbumItems.map((track: any) => {
       return {
         id: track.id,
@@ -72,26 +71,26 @@ export async function fetchSpotifyPlaylist(playlistUrl: string) {
     return {
       id: albumData.id,
       name: albumData.name,
-      description: albumData.label ? `${albumData.label} etiketiyle yayınlandı` : 'Spotify Albümü',
+      description: albumData.label ? `Released by ${albumData.label}` : 'Spotify Album',
       image: albumData.images?.[0]?.url,
       totalTracks: albumData.total_tracks || trackList.length,
-      owner: albumData.artists?.[0]?.name || 'Bilinmeyen Sanatçı',
+      owner: albumData.artists?.[0]?.name || 'Unknown Artist',
       tracks: trackList
     };
   } else {
-    // ÇALMA LİSTESİ İŞLEMLERİ
+    // PLAYLIST OPERATIONS
     const res = await fetch(`https://api.spotify.com/v1/playlists/${spotifyId}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
     if (!res.ok) {
-      if (res.status === 404) throw new Error('Çalma listesi bulunamadı. Gizli olabilir veya link hatalı.');
-      throw new Error('Spotify API hatası.');
+      if (res.status === 404) throw new Error('Playlist not found. It might be private or the link is invalid.');
+      throw new Error('Spotify API error.');
     }
 
     const playlistData = await res.json();
     
-    // Playlist şarkıları için sayfalama (pagination)
+    // Pagination for playlist tracks
     let allPlaylistItems: any[] = [];
     let playlistTracksUrl = `https://api.spotify.com/v1/playlists/${spotifyId}/items?limit=100`;
     
@@ -103,9 +102,9 @@ export async function fetchSpotifyPlaylist(playlistUrl: string) {
       
       if (pageData.error) {
         if (allPlaylistItems.length === 0) {
-          throw new Error('Spotify API (Tracks) Hatası: ' + (pageData.error.message || JSON.stringify(pageData.error)));
+          throw new Error('Spotify API (Tracks) Error: ' + (pageData.error.message || JSON.stringify(pageData.error)));
         }
-        break; // Hata verirse (örneğin rate limit) olanı kullan
+        break;
       }
       
       allPlaylistItems.push(...(pageData.items || []));
@@ -141,7 +140,7 @@ export async function createYouTubePlaylist(title: string, description: string) 
   const token = cookieStore.get('google_access_token')?.value;
 
   if (!token) {
-    throw new Error('Google token bulunamadı. Lütfen YouTube hesabınızı bağlayın.');
+    throw new Error('Google token not found. Please connect your YouTube account.');
   }
 
   const oauth2Client = new google.auth.OAuth2();
@@ -154,10 +153,10 @@ export async function createYouTubePlaylist(title: string, description: string) 
     requestBody: {
       snippet: {
         title: title + ' (Playlister)',
-        description: description || 'Playlister ile Spotify\'dan aktarıldı.',
+        description: description || 'Transferred from Spotify with Playlister.',
       },
       status: {
-        privacyStatus: 'private', // Varsayılan olarak gizli oluşturuyoruz
+        privacyStatus: 'private', // Default to private
       },
     },
   });
@@ -183,7 +182,7 @@ export async function searchAndAddYouTubeVideo(playlistId: string, trackName: st
 
   const query = `${artist} - ${trackName} official audio`;
 
-  // 1. Şarkıyı YouTube'da ara
+  // 1. Search song on YouTube
   const searchRes = await youtube.search.list({
     part: ['id'],
     q: query,
@@ -194,10 +193,10 @@ export async function searchAndAddYouTubeVideo(playlistId: string, trackName: st
   const videoId = searchRes.data.items?.[0]?.id?.videoId;
 
   if (!videoId) {
-    return { success: false, error: 'Video bulunamadı.' };
+    return { success: false, error: 'Video not found.' };
   }
 
-  // 2. Bulunan videoyu çalma listesine ekle
+  // 2. Insert video into playlist
   await youtube.playlistItems.insert({
     part: ['snippet'],
     requestBody: {

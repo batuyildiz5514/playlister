@@ -41,14 +41,14 @@ export default function ProfilePlaylistsClient({ playlists }: { playlists: any[]
               )}
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <span className="bg-gray-800 text-white font-bold py-2 px-6 rounded-full text-sm transform translate-y-4 group-hover:translate-y-0 transition-all border border-gray-600">
-                  İçeriği Gör
+                  View Tracks
                 </span>
               </div>
             </div>
             <h3 className="font-bold text-lg truncate mb-1" title={playlist.name}>{playlist.name}</h3>
-            <p className="text-gray-400 text-xs mb-2">Oluşturan: {playlist.owner?.display_name}</p>
+            <p className="text-gray-400 text-xs mb-2">Created by: {playlist.owner?.display_name}</p>
             {(playlist.tracks?.total && playlist.tracks.total > 0) ? (
-              <p className="text-gray-500 text-xs mt-auto font-semibold">{playlist.tracks.total} Şarkı</p>
+              <p className="text-gray-500 text-xs mt-auto font-semibold">{playlist.tracks.total} Tracks</p>
             ) : (
               <p className="text-gray-500 text-xs mt-auto font-semibold">&nbsp;</p>
             )}
@@ -67,7 +67,7 @@ export default function ProfilePlaylistsClient({ playlists }: { playlists: any[]
                 <div>
                   <h2 className="text-2xl font-bold text-white">{selectedPlaylist.name}</h2>
                   <p className="text-gray-400 text-sm mt-1">
-                    {loading ? 'Şarkılar yükleniyor...' : (playlistDetails ? `${playlistDetails.tracks.length} Şarkı` : 'Yüklenemedi')}
+                    {loading ? 'Loading tracks...' : (playlistDetails ? `${playlistDetails.tracks.length} Tracks` : 'Failed to load')}
                   </p>
                 </div>
               </div>
@@ -94,7 +94,7 @@ export default function ProfilePlaylistsClient({ playlists }: { playlists: any[]
                   ))}
                 </div>
               ) : (
-                <p className="text-red-400 text-center">Şarkılar yüklenirken bir hata oluştu.</p>
+                <p className="text-red-400 text-center">Failed to load playlist tracks.</p>
               )}
             </div>
 
@@ -103,7 +103,7 @@ export default function ProfilePlaylistsClient({ playlists }: { playlists: any[]
                 onClick={() => setSelectedPlaylist(null)}
                 className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors"
               >
-                Kapat
+                Close
               </button>
               <Link 
                 href={`/dashboard?url=${encodeURIComponent(selectedPlaylist.external_urls?.spotify || '')}`}
@@ -112,7 +112,7 @@ export default function ProfilePlaylistsClient({ playlists }: { playlists: any[]
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
-                Bu Listeyi Dönüştür
+                Convert This Playlist
               </Link>
             </div>
           </div>

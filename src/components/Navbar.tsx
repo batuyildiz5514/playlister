@@ -33,11 +33,11 @@ export default async function Navbar() {
 
         <div className="flex gap-6 items-center">
           <Link href="/dashboard" className="text-gray-300 hover:text-white transition-colors font-medium">
-            Dönüştürücü
+            Converter
           </Link>
           <Link href="/profile" className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors font-medium">
             {userAvatar ? (
-              <img src={userAvatar} alt="Profil" className="w-8 h-8 rounded-full border border-gray-700" />
+              <img src={userAvatar} alt="Profile" className="w-8 h-8 rounded-full border border-gray-700" />
             ) : (
               <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center">👤</div>
             )}

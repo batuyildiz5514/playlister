@@ -26,7 +26,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
              <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-red-500 inline-block mb-4">
                 Playlister
              </h1>
-             <p className="text-gray-400 text-lg">Spotify çalma listelerini veya albümlerini anında YouTube'a taşı.</p>
+             <p className="text-gray-400 text-lg">Transfer Spotify playlists or albums to YouTube in seconds.</p>
           </div>
           
           <ConverterClient initialUrl={initialUrl} />

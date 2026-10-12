@@ -37,7 +37,7 @@ export default function ConverterClient({ initialUrl = '' }: { initialUrl?: stri
       const data = await fetchSpotifyPlaylist(searchUrl);
       setPlaylist(data);
     } catch (err: any) {
-      setError(err.message || 'Bir hata oluştu.');
+      setError(err.message || 'An error occurred.');
     } finally {
       setLoading(false);
     }
@@ -51,30 +51,30 @@ export default function ConverterClient({ initialUrl = '' }: { initialUrl?: stri
 
   const startConversion = async () => {
     if (!playlist || !playlist.tracks || playlist.tracks.length === 0) {
-      setError('Dönüştürülecek şarkı bulunamadı.');
+      setError('No tracks found to convert.');
       return;
     }
 
     setConverting(true);
-    setStatusText('YouTube çalma listesi oluşturuluyor...');
+    setStatusText('Creating YouTube playlist...');
     
     try {
       const ytPlaylistId = await createYouTubePlaylist(playlist.name, playlist.description);
       
-      if (!ytPlaylistId) throw new Error('YouTube çalma listesi oluşturulamadı.');
+      if (!ytPlaylistId) throw new Error('Failed to create YouTube playlist.');
       
       setSuccessYtLink(`https://www.youtube.com/playlist?list=${ytPlaylistId}`);
       
       let failed: string[] = [];
-      const chunkSize = 5; // Aynı anda 5 şarkı işlenecek
+      const chunkSize = 5; // 5 tracks processed concurrently
       let completedCount = 0;
       
       for (let i = 0; i < playlist.tracks.length; i += chunkSize) {
         const chunk = playlist.tracks.slice(i, i + chunkSize);
         
-        setStatusText(`⚡ Paralel Aktarılıyor... (${completedCount}/${playlist.tracks.length})`);
+        setStatusText(`⚡ Transferring in parallel... (${completedCount}/${playlist.tracks.length})`);
         
-        // Chunk içindeki şarkıları aynı anda (paralel) gönder
+        // Process tracks concurrently
         const results = await Promise.all(chunk.map(async (track: any) => {
           try {
             const result = await searchAndAddYouTubeVideo(ytPlaylistId, track.name, track.artist);
@@ -84,7 +84,6 @@ export default function ConverterClient({ initialUrl = '' }: { initialUrl?: stri
           }
         }));
         
-        // Hatalı olanları listeye ekle
         results.forEach(res => {
           if (res) failed.push(res);
         });
@@ -93,12 +92,12 @@ export default function ConverterClient({ initialUrl = '' }: { initialUrl?: stri
         setProgress(Math.round((completedCount / playlist.tracks.length) * 100));
       }
       
-      setStatusText('Aktarım Tamamlandı! 🎉');
+      setStatusText('Transfer Completed! 🎉');
       setFailedTracks(failed);
       
     } catch (err: any) {
-      setError(err.message || 'Dönüştürme sırasında bir hata oluştu.');
-      setStatusText('Aktarım İptal Edildi.');
+      setError(err.message || 'An error occurred during conversion.');
+      setStatusText('Transfer Cancelled.');
     } finally {
       setConverting(false);
     }
@@ -109,7 +108,7 @@ export default function ConverterClient({ initialUrl = '' }: { initialUrl?: stri
       <div className="mb-12 flex flex-col md:flex-row gap-4">
         <input
           type="text"
-          placeholder="Spotify Çalma Listesi veya Albüm Linkini Yapıştır (Örn: https://open.spotify.com/album/...)"
+          placeholder="Paste Spotify Playlist or Album Link (e.g. https://open.spotify.com/album/...)"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSearch(e as any)}
@@ -122,7 +121,7 @@ export default function ConverterClient({ initialUrl = '' }: { initialUrl?: stri
           disabled={loading || converting}
           className="bg-green-500 hover:bg-green-600 disabled:bg-gray-700 disabled:text-gray-400 text-black font-bold py-4 px-8 rounded-xl transition-all text-lg"
         >
-          {loading ? 'Aranıyor...' : 'Listeyi Bul'}
+          {loading ? 'Searching...' : 'Find Playlist'}
         </button>
       </div>
 
@@ -133,7 +132,7 @@ export default function ConverterClient({ initialUrl = '' }: { initialUrl?: stri
       )}
 
       {playlist && (
-        <div className="bg-gray-900 border border-gray-800 p-8 rounded-2xl flex flex-col items-center animate-fade-in-up">
+        <div className="bg-gray-900 border border-gray-800 p-8 rounded-2xl flex flex-col items-center">
           <div className="flex flex-col md:flex-row gap-8 items-center w-full mb-8">
             {playlist.image ? (
               <img src={playlist.image} alt={playlist.name} className="w-48 h-48 object-cover rounded-xl shadow-2xl" />
@@ -145,15 +144,15 @@ export default function ConverterClient({ initialUrl = '' }: { initialUrl?: stri
             
             <div className="flex-1 text-center md:text-left">
               <h2 className="text-3xl font-bold mb-2">{playlist.name}</h2>
-              <p className="text-gray-400 mb-2">Oluşturan: {playlist.owner}</p>
-              <p className="text-blue-400 font-semibold text-lg mb-6">{playlist.tracks.length} Şarkı Aktarılacak</p>
+              <p className="text-gray-400 mb-2">Created by: {playlist.owner}</p>
+              <p className="text-blue-400 font-semibold text-lg mb-6">{playlist.tracks.length} Tracks to Transfer</p>
               
               {!converting && progress === 0 && !successYtLink && (
                 <button 
                   onClick={startConversion}
                   className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-red-500/30 text-lg flex items-center justify-center gap-2 mx-auto md:mx-0"
                 >
-                  <span>▶️</span> YouTube'a Aktarmayı Başlat
+                  <span>▶️</span> Start Transfer to YouTube
                 </button>
               )}
             </div>
@@ -176,14 +175,14 @@ export default function ConverterClient({ initialUrl = '' }: { initialUrl?: stri
               {successYtLink && progress === 100 && (
                 <div className="text-center mt-4">
                   <a href={successYtLink} target="_blank" rel="noopener noreferrer" className="inline-block bg-white text-black font-bold py-3 px-8 rounded-full hover:bg-gray-200 transition-colors">
-                    YouTube'da Aç 🎧
+                    Open on YouTube 🎧
                   </a>
                 </div>
               )}
 
               {failedTracks.length > 0 && progress === 100 && (
                 <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/50 rounded-xl">
-                  <h4 className="text-yellow-400 font-bold mb-2">⚠️ Bulunamayan Şarkılar ({failedTracks.length}):</h4>
+                  <h4 className="text-yellow-400 font-bold mb-2">⚠️ Unresolved Tracks ({failedTracks.length}):</h4>
                   <ul className="text-gray-400 text-sm list-disc pl-5 max-h-32 overflow-y-auto">
                     {failedTracks.map((t, i) => (
                       <li key={i}>{t}</li>

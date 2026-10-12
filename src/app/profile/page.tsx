@@ -46,20 +46,20 @@ export default async function Profile() {
         <div className="max-w-6xl mx-auto">
           <div className="flex justify-between items-end mb-12 border-b border-gray-800 pb-6">
             <div>
-              <h1 className="text-4xl font-bold mb-2">Senin Çalma Listelerin</h1>
-              <p className="text-gray-400">Spotify hesabındaki listeler. İçeriğini inceleyebilir ve YouTube'a aktarabilirsin.</p>
+              <h1 className="text-4xl font-bold mb-2">Your Playlists</h1>
+              <p className="text-gray-400">Playlists in your Spotify account. Inspect contents and transfer them to YouTube.</p>
             </div>
             <Link 
               href="/" 
               className="px-6 py-2 bg-gray-800 hover:bg-gray-700 text-sm font-medium rounded-lg transition-colors border border-gray-700"
             >
-              Bağlantıları Yönet / Çıkış Yap
+              Manage Accounts / Disconnect
             </Link>
           </div>
 
           {playlists.length === 0 ? (
             <div className="bg-gray-900 border border-gray-800 p-12 rounded-2xl text-center">
-              <p className="text-xl text-gray-400">Spotify hesabında çalma listesi bulunamadı.</p>
+              <p className="text-xl text-gray-400">No playlists found in your Spotify account.</p>
             </div>
           ) : (
             <ProfilePlaylistsClient playlists={playlists} />

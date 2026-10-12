@@ -60,14 +60,14 @@ export default async function Home() {
           )}
           
           <h2 className="text-2xl font-semibold text-gray-200 mb-2">
-            Hoş Geldiniz
+            Welcome
           </h2>
           <p className="text-gray-400 mb-12 text-lg">
-            Spotify listelerinizi tek tıkla YouTube'a taşıyın. İşleme başlamak için hesaplarınızı bağlayın.
+            Transfer your Spotify playlists and albums to YouTube in a single click. Connect your accounts to get started.
           </p>
 
           <div className="grid md:grid-cols-2 gap-8 mb-12">
-            {/* Spotify Kartı */}
+            {/* Spotify Card */}
             <div className={`p-8 rounded-3xl border-2 transition-all duration-300 shadow-xl flex flex-col items-center justify-center gap-4 ${
               isSpotifyConnected 
                 ? 'bg-gray-900 border-green-500 shadow-green-500/20' 
@@ -87,25 +87,25 @@ export default async function Home() {
                   <div className="flex items-center gap-2 bg-green-500/10 px-4 py-2 rounded-lg border border-green-500/20">
                     <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
                     <span className="text-green-400 text-sm font-semibold truncate max-w-[150px]">
-                      {spotifyProfile?.name || 'Bağlandı'}
+                      {spotifyProfile?.name || 'Connected'}
                     </span>
                   </div>
                   <form action={async () => { 'use server'; await logout('spotify'); }}>
                     <button type="submit" className="text-gray-400 hover:text-red-400 text-sm font-medium transition-colors underline underline-offset-4">
-                      Bağlantıyı Kes
+                      Disconnect
                     </button>
                   </form>
                 </div>
               ) : (
                 <Link href="/api/auth/spotify" className="mt-2 w-full">
                   <button className="w-full py-3 px-6 bg-green-500 hover:bg-green-400 text-black font-bold rounded-xl transition-transform hover:scale-105 active:scale-95">
-                    Spotify'ı Bağla
+                    Connect Spotify
                   </button>
                 </Link>
               )}
             </div>
 
-            {/* YouTube Kartı */}
+            {/* YouTube Card */}
             <div className={`p-8 rounded-3xl border-2 transition-all duration-300 shadow-xl flex flex-col items-center justify-center gap-4 ${
               isGoogleConnected 
                 ? 'bg-gray-900 border-red-500 shadow-red-500/20' 
@@ -125,38 +125,38 @@ export default async function Home() {
                   <div className="flex items-center gap-2 bg-red-500/10 px-4 py-2 rounded-lg border border-red-500/20">
                     <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse"></span>
                     <span className="text-red-400 text-sm font-semibold truncate max-w-[150px]">
-                      {ytProfile?.name || 'Bağlandı'}
+                      {ytProfile?.name || 'Connected'}
                     </span>
                   </div>
                   <form action={async () => { 'use server'; await logout('google'); }}>
                     <button type="submit" className="text-gray-400 hover:text-red-400 text-sm font-medium transition-colors underline underline-offset-4">
-                      Bağlantıyı Kes
+                      Disconnect
                     </button>
                   </form>
                 </div>
               ) : (
                 <Link href="/api/auth/google" className="mt-2 w-full">
                   <button className="w-full py-3 px-6 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl transition-transform hover:scale-105 active:scale-95">
-                    YouTube'u Bağla
+                    Connect YouTube
                   </button>
                 </Link>
               )}
             </div>
           </div>
 
-          {/* Devam Et Butonu */}
+          {/* Action Button */}
           <div className="h-24">
             {isSpotifyConnected && isGoogleConnected ? (
               <div className="transform transition-all duration-500 hover:-translate-y-1">
                 <Link href="/dashboard">
                   <button className="px-10 py-4 bg-gradient-to-r from-green-500 to-red-500 text-white text-lg font-bold rounded-2xl shadow-2xl hover:shadow-green-500/20 transition-all hover:scale-105 hover:from-green-400 hover:to-red-400">
-                    Dönüştürücüye Git 🚀
+                    Go to Converter 🚀
                   </button>
                 </Link>
               </div>
             ) : (
               <div className="opacity-50">
-                <p className="text-gray-500">Devam etmek için her iki platformu da bağlamalısınız.</p>
+                <p className="text-gray-500">Please connect both platforms to continue.</p>
               </div>
             )}
           </div>
