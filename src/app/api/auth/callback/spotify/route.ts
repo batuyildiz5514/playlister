@@ -1,20 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getBaseUrl } from '@/lib/url';
 
 const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
-const REDIRECT_URI = 'http://127.0.0.1:3000/api/auth/callback/spotify';
 
 export async function GET(request: NextRequest) {
+  const baseUrl = getBaseUrl();
+  const redirectUri = `${baseUrl}/api/auth/callback/spotify`;
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
   const error = searchParams.get('error');
 
   if (error) {
-    return NextResponse.redirect(new URL('/?error=spotify_access_denied', request.url));
+    return NextResponse.redirect(new URL('/?error=spotify_access_denied', baseUrl));
   }
 
   if (!code) {
-    return NextResponse.redirect(new URL('/?error=missing_code', request.url));
+    return NextResponse.redirect(new URL('/?error=missing_code', baseUrl));
   }
 
   const authOptions = {
@@ -25,7 +27,7 @@ export async function GET(request: NextRequest) {
     },
     body: new URLSearchParams({
       code: code,
-      redirect_uri: REDIRECT_URI,
+      redirect_uri: redirectUri,
       grant_type: 'authorization_code'
     })
   };
@@ -37,12 +39,14 @@ export async function GET(request: NextRequest) {
     if (data.access_token) {
       const isGoogleConnected = request.cookies.has('google_access_token');
       const targetPath = isGoogleConnected ? '/dashboard' : '/?spotify=success';
-      const response = NextResponse.redirect(new URL(targetPath, 'http://127.0.0.1:3000'));
+      const response = NextResponse.redirect(new URL(targetPath, baseUrl));
+      const isProd = process.env.NODE_ENV === 'production';
       
       response.cookies.set('spotify_access_token', data.access_token, {
         path: '/',
         httpOnly: true,
         sameSite: 'lax',
+        secure: isProd,
         maxAge: data.expires_in || 3600,
       });
       
@@ -51,15 +55,16 @@ export async function GET(request: NextRequest) {
           path: '/',
           httpOnly: true,
           sameSite: 'lax',
+          secure: isProd,
         });
       }
 
       return response;
     } else {
-      return NextResponse.redirect(new URL('/?error=spotify_token_failed', request.url));
+      return NextResponse.redirect(new URL('/?error=spotify_token_failed', baseUrl));
     }
   } catch (err) {
     console.error('Spotify token error:', err);
-    return NextResponse.redirect(new URL('/?error=spotify_server_error', request.url));
+    return NextResponse.redirect(new URL('/?error=spotify_server_error', baseUrl));
   }
 }
