@@ -24,26 +24,27 @@ Hem web, hem mobil, hem de masaüstünde çalışacak bir yapı kurmak için "Bi
 
 ## 🚀 Geliştirme Aşamaları (Yol Haritası)
 
-### Aşama 1: Kurulum ve Temel Yapı (Şu anki aşamamız)
-1.  [ ] Proje klasöründe Next.js uygulamasının oluşturulması (VScode'a uygun).
-2.  [ ] Git (versiyon kontrolü) başlatılması ve ilk "commit"in yapılması.
-3.  [ ] Gerekli kütüphanelerin kurulması.
-4.  [ ] Spotify ve Google Cloud (YouTube) Developer konsollarından API anahtarlarının alınması (Bunu sizinle beraber yapacağız).
+### Aşama 1: Kurulum ve Temel Yapı
+1.  [x] Proje klasöründe Next.js uygulamasının oluşturulması (VScode'a uygun).
+2.  [x] Git (versiyon kontrolü) başlatılması ve ilk "commit"in yapılması.
+3.  [x] Gerekli kütüphanelerin kurulması.
+4.  [x] Spotify ve Google Cloud (YouTube) Developer konsollarından API anahtarlarının alınması.
 
 ### Aşama 2: API Entegrasyonları ve Kimlik Doğrulama
-1.  [ ] Spotify OAuth 2.0 entegrasyonu (Kullanıcının "Spotify ile Giriş Yap" butonuna basması).
-2.  [ ] YouTube (Google) OAuth 2.0 entegrasyonu ("YouTube ile Giriş Yap").
-3.  [ ] Kullanıcının Spotify çalma listelerini çeken fonksiyonun yazılması.
+1.  [x] Spotify OAuth 2.0 entegrasyonu (Kullanıcının "Spotify ile Giriş Yap" butonuna basması).
+2.  [x] YouTube (Google) OAuth 2.0 entegrasyonu ("YouTube ile Giriş Yap").
+3.  [x] Kullanıcının Spotify çalma listelerini çeken fonksiyonun yazılması.
 
 ### Aşama 3: Çekirdek Mantık (Dönüştürme İşlemi)
-1.  [ ] Kullanıcının seçtiği Spotify çalma listesindeki şarkıların listelenmesi.
-2.  [ ] Her bir şarkı adı ve sanatçısının YouTube'da aratılması (Örn: "Daft Punk - Get Lucky official audio").
-3.  [ ] YouTube hesabında yeni bir çalma listesi oluşturulması.
-4.  [ ] Bulunan YouTube videolarının bu yeni çalma listesine eklenmesi.
+1.  [x] Kullanıcının seçtiği Spotify çalma listesindeki şarkıların listelenmesi (ve albüm desteği).
+2.  [x] Her bir şarkı adı ve sanatçısının YouTube'da aratılması (Paralel 5x işlem motoru).
+3.  [x] YouTube hesabında yeni bir çalma listesi oluşturulması.
+4.  [x] Bulunan YouTube videolarının bu yeni çalma listesine eklenmesi.
 
 ### Aşama 4: Arayüz (UI/UX) ve Hata Yönetimi
-1.  [ ] Modern, karanlık tema (Dark mode) destekli, şık bir arayüz tasarımı.
-2.  [ ] Dönüşüm sırasında kullanıcıya ilerleme çubuğu (Progress bar) gösterilmesi.
+1.  [x] Modern, karanlık tema (Dark mode) destekli, şık bir arayüz tasarımı.
+2.  [x] Dönüşüm sırasında kullanıcıya ilerleme çubuğu (Progress bar) gösterilmesi.
+3.  [x] Profil sayfası, çalma listesi modal önizlemesi ve oturum yönetimi (Bağlantıyı Kes).
 
 ### Aşama 5: Masaüstü ve Mobil Sürümler
 1.  [ ] Tauri entegrasyonu ile uygulamanın `.exe` formatında derlenmesi.
