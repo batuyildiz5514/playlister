@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { oauth2Client } from '@/lib/google';
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
   const error = searchParams.get('error');
@@ -18,12 +18,23 @@ export async function GET(request: Request) {
     const { tokens } = await oauth2Client.getToken(code);
     
     if (tokens.access_token) {
-      const response = NextResponse.redirect(new URL('/?google=success', request.url));
+      const isSpotifyConnected = request.cookies.has('spotify_access_token');
+      const targetPath = isSpotifyConnected ? '/dashboard' : '/?google=success';
+      const response = NextResponse.redirect(new URL(targetPath, request.url));
       
-      response.headers.append('Set-Cookie', `google_access_token=${tokens.access_token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=3600`);
+      response.cookies.set('google_access_token', tokens.access_token, {
+        path: '/',
+        httpOnly: true,
+        sameSite: 'lax',
+        maxAge: 3600,
+      });
       
       if (tokens.refresh_token) {
-        response.headers.append('Set-Cookie', `google_refresh_token=${tokens.refresh_token}; Path=/; HttpOnly; SameSite=Lax`);
+        response.cookies.set('google_refresh_token', tokens.refresh_token, {
+          path: '/',
+          httpOnly: true,
+          sameSite: 'lax',
+        });
       }
 
       return response;

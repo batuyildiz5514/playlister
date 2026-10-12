@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 const REDIRECT_URI = 'http://127.0.0.1:3000/api/auth/callback/spotify';
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
   const error = searchParams.get('error');
@@ -35,12 +35,23 @@ export async function GET(request: Request) {
     const data = await fetchResponse.json();
 
     if (data.access_token) {
-      const response = NextResponse.redirect(new URL('/?spotify=success', request.url));
+      const isGoogleConnected = request.cookies.has('google_access_token');
+      const targetPath = isGoogleConnected ? '/dashboard' : '/?spotify=success';
+      const response = NextResponse.redirect(new URL(targetPath, request.url));
       
-      response.headers.append('Set-Cookie', `spotify_access_token=${data.access_token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${data.expires_in}`);
+      response.cookies.set('spotify_access_token', data.access_token, {
+        path: '/',
+        httpOnly: true,
+        sameSite: 'lax',
+        maxAge: data.expires_in || 3600,
+      });
       
       if (data.refresh_token) {
-        response.headers.append('Set-Cookie', `spotify_refresh_token=${data.refresh_token}; Path=/; HttpOnly; SameSite=Lax`);
+        response.cookies.set('spotify_refresh_token', data.refresh_token, {
+          path: '/',
+          httpOnly: true,
+          sameSite: 'lax',
+        });
       }
 
       return response;

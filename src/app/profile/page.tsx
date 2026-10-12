@@ -50,7 +50,7 @@ export default async function Profile() {
               <p className="text-gray-400">Playlists in your Spotify account. Inspect contents and transfer them to YouTube.</p>
             </div>
             <Link 
-              href="/" 
+              href="/?manage=true" 
               className="px-6 py-2 bg-gray-800 hover:bg-gray-700 text-sm font-medium rounded-lg transition-colors border border-gray-700"
             >
               Manage Accounts / Disconnect

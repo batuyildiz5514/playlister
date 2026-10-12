@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { logout } from './actions';
 import Navbar from '../components/Navbar';
 
@@ -36,16 +37,23 @@ async function getYouTubeProfile(token: string) {
   } catch (e) { return null; }
 }
 
-export default async function Home() {
+export default async function Home({ searchParams }: { searchParams?: Promise<{ manage?: string }> }) {
   const cookieStore = await cookies();
   const spotifyToken = cookieStore.get('spotify_access_token')?.value;
   const googleToken = cookieStore.get('google_access_token')?.value;
 
-  const spotifyProfile = spotifyToken ? await getSpotifyProfile(spotifyToken) : null;
-  const ytProfile = googleToken ? await getYouTubeProfile(googleToken) : null;
-
   const isSpotifyConnected = !!spotifyToken;
   const isGoogleConnected = !!googleToken;
+
+  const resolvedParams = searchParams ? await searchParams : undefined;
+  const isManage = resolvedParams?.manage === 'true';
+
+  if (isSpotifyConnected && isGoogleConnected && !isManage) {
+    redirect('/dashboard');
+  }
+
+  const spotifyProfile = spotifyToken ? await getSpotifyProfile(spotifyToken) : null;
+  const ytProfile = googleToken ? await getYouTubeProfile(googleToken) : null;
 
   return (
     <div className="min-h-screen bg-gray-950 text-white font-sans flex flex-col">
@@ -97,11 +105,11 @@ export default async function Home() {
                   </form>
                 </div>
               ) : (
-                <Link href="/api/auth/spotify" className="mt-2 w-full">
+                <a href="/api/auth/spotify" className="mt-2 w-full block">
                   <button className="w-full py-3 px-6 bg-green-500 hover:bg-green-400 text-black font-bold rounded-xl transition-transform hover:scale-105 active:scale-95">
                     Connect Spotify
                   </button>
-                </Link>
+                </a>
               )}
             </div>
 
@@ -135,11 +143,11 @@ export default async function Home() {
                   </form>
                 </div>
               ) : (
-                <Link href="/api/auth/google" className="mt-2 w-full">
+                <a href="/api/auth/google" className="mt-2 w-full block">
                   <button className="w-full py-3 px-6 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl transition-transform hover:scale-105 active:scale-95">
                     Connect YouTube
                   </button>
-                </Link>
+                </a>
               )}
             </div>
           </div>
